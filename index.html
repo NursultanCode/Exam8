@@ -12,8 +12,10 @@
 </head>
 <body>
 <form id="country-form" method="post">
-    <input type="text" name="code" id="code">
+    <input type="text" class="my-3" name="code" id="code" autofocus required>
+
     <button type="submit">Search</button>
+    <button onClick="window.location.reload();">Reset</button>
         <div  id="country-list" class="row row-cols-1 row-cols-md-2 g-4">
 
         </div>
@@ -32,20 +34,31 @@
 
 
         function loadCountry(code){
-            fetch("https://restcountries.eu/rest/v2/alpha/"+code)
-                .then(function (response){
-                    return response.text();
-
-                })
-                .then(function (text) {
-                    var fromJSON = JSON.parse(text);
-                    console.log(fromJSON)
-                    createPost(fromJSON);
+            if (code.length<2){
+                alert("Your code should be longer");
+                countryForm.reset();
+                countryCode.focus();
+            }else {
+                fetch("https://restcountries.eu/rest/v2/alpha/"+code)
+                    .then(function (response){
+                        return response.text();
                     })
+                    .then(function (text) {
+                        var fromJSON = JSON.parse(text);
+                        if (fromJSON.name==null){
+                            alert("We can not find country with "+code);
+                            countryForm.reset();
+                            countryCode.focus();
+                        }else {
+                            createPost(fromJSON);
+                        }
+                    })
+            }
+
         }
 
         function createPost(item) {
-            let el = `<div class="col">
+            let el = `<div class="col m-3">
                 <div class="card">
                     <img src="${item.flag}" class="card-img-top" alt="...">
                     <div class="card-body">
@@ -56,9 +69,8 @@
                             <h6>Currency:</h6>
                         </div>
                         <p>Search</p>
-                        <a href="https://www.google.com/search?q=Kazakhstan"  target="_blank">More</a>
-                        <a href="https://ru.m.wikipedia.org/wiki/Kazakhstan" target="_blank">More</a>
-
+                        <a href="https://www.google.com/search?q=${item.name}" target="_blank">More</a>
+                        <a href="https://ru.m.wikipedia.org/wiki/${item.name}" target="_blank">More</a>
                     </div>
                 </div>
             </div>`
@@ -70,6 +82,8 @@
                 p.innerHTML = cur.name;
                document.getElementById(`currency${item.name}`).append(p);
             })
+            countryForm.reset();
+            countryCode.focus();
         }
     </script>
 </body>
