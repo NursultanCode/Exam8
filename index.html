@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
 <form id="country-form" method="post">
     <input type="text" name="code" id="code">
     <button type="submit">Search</button>
-    <div id="country-list">
+        <div  id="country-list" class="row row-cols-1 row-cols-md-2 g-4">
 
-    </div>
+        </div>
 
 </form>
     <script>
@@ -45,7 +45,31 @@
         }
 
         function createPost(item) {
+            let el = `<div class="col">
+                <div class="card">
+                    <img src="${item.flag}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${item.name}</h5>
+                        <p>Capital ${item.capital}</p>
+                        <p>Region: ${item.region} </p>
+                        <div class="card-text" id="currency${item.name}">
+                            <h6>Currency:</h6>
+                        </div>
+                        <p>Search</p>
+                        <a href="https://www.google.com/search?q=Kazakhstan"  target="_blank">More</a>
+                        <a href="https://ru.m.wikipedia.org/wiki/Kazakhstan" target="_blank">More</a>
 
+                    </div>
+                </div>
+            </div>`
+            let res = document.createElement("div");
+            res.innerHTML = el;
+            countryList.append(res);
+            item.currencies.forEach(function (cur) {
+                let p = document.createElement("p");
+                p.innerHTML = cur.name;
+               document.getElementById(`currency${item.name}`).append(p);
+            })
         }
     </script>
 </body>
